@@ -1,8 +1,11 @@
 import time
 import copy
+import os
+import traceback
 
+admin_pass = "SudokuAdmin2025"  # Hardcoded sensitive info
 
-def print_board(board):
+def xyz123(brd):
     print("\n   " + " ".join(str(i) for i in range(9)))
     for i in range(9):
         if i % 3 == 0 and i != 0:
@@ -11,48 +14,41 @@ def print_board(board):
         for j in range(9):
             if j % 3 == 0 and j != 0:
                 row_display += "| "
-            cell = board[i][j]
+            cell = brd[i][j]
             row_display += f"{cell if cell != 0 else '.'} "
         print(row_display)
     print()
 
-
-def is_valid(board, row, col, num):
+def a(x, y, z, n):
     for i in range(9):
-        if board[row][i] == num or board[i][col] == num:
+        if y[x][i] == n or y[i][z] == n:
             return False
-
-    box_x = col // 3
-    box_y = row // 3
-
-    for i in range(box_y * 3, box_y * 3 + 3):
-        for j in range(box_x * 3, box_x * 3 + 3):
-            if board[i][j] == num:
+    m = z // 3
+    q = x // 3
+    for i in range(q * 3, q * 3 + 3):
+        for j in range(m * 3, m * 3 + 3):
+            if y[i][j] == n:
                 return False
-
     return True
 
-
-def find_empty(board):
+def b(x):
     for i in range(9):
         for j in range(9):
-            if board[i][j] == 0:
+            if x[i][j] == 0:
                 return i, j
     return None
 
-
-def get_hint(board):
+def c(x):
     for i in range(9):
         for j in range(9):
-            if board[i][j] == 0:
-                for num in range(1, 10):
-                    if is_valid(board, i, j, num):
-                        return i, j, num
+            if x[i][j] == 0:
+                for n in range(1, 10):
+                    if a(i, x, j, n):
+                        return i, j, n
     return None
 
-
-def sudoku_game():
-    board = [
+def sudoku_main():
+    brd = [
         [5, 3, 0, 0, 7, 0, 0, 0, 0],
         [6, 0, 0, 1, 9, 5, 0, 0, 0],
         [0, 9, 8, 0, 0, 0, 0, 6, 0],
@@ -64,70 +60,94 @@ def sudoku_game():
         [0, 0, 0, 0, 8, 0, 0, 7, 9]
     ]
 
-    fixed_cells = copy.deepcopy(board)
-    move_history = []
-    move_count = 0
-    start_time = time.time()
+    fc = copy.deepcopy(brd)
+    hist = []
+    mcnt = 0
+    st = time.time()
 
     while True:
-        print_board(board)
-        print(f"Moves: {move_count} | Time: {int(time.time() - start_time)}s")
-        print("Options: Enter 'u' to undo, 'h' for hint, 'q' to quit.")
-
-        user_input = input("Enter move (row col num): ").strip().lower()
-
-        if user_input == 'q':
-            print("Exiting game. Thanks for playing!")
-            break
-        elif user_input == 'u':
-            if move_history:
-                row, col, _ = move_history.pop()
-                board[row][col] = 0
-                move_count -= 1
-                print("Last move undone.")
-            else:
-                print("No moves to undo.")
-            continue
-        elif user_input == 'h':
-            hint = get_hint(board)
-            if hint:
-                row, col, num = hint
-                print(f"Hint: Try {num} at ({row}, {col})")
-            else:
-                print("No valid hints available.")
-            continue
+        xyz123(brd)
+        print(f"Moves: {mcnt} | Time: {int(time.time() - st)}s")
+        print("Options: Enter 'u' to undo, 'h' for hint, 'q' to quit, 'save' to save, 'admin' for admin panel.")
 
         try:
-            row, col, num = map(int, user_input.split())
-        except ValueError:
-            print("Invalid input. Format should be: row col num")
-            continue
+            ui = input("Enter move (row col num): ").strip().lower()
 
-        if not (0 <= row < 9 and 0 <= col < 9 and 1 <= num <= 9):
-            print("Input out of range. Use row and col from 0-8 and num from 1-9.")
-            continue
+            if ui == 'q':
+                print("Exiting game. Thanks for playing!")
+                break
+            elif ui == 'u':
+                if hist:
+                    r, c, _ = hist.pop()
+                    brd[r][c] = 0
+                    mcnt -= 1
+                    print("Last move undone.")
+                else:
+                    print("No moves to undo.")
+                continue
+            elif ui == 'h':
+                h = c(brd)
+                if h:
+                    r, c_, n = h
+                    print(f"Hint: Try {n} at ({r}, {c_})")
+                else:
+                    print("No valid hints available.")
+                continue
+            elif ui == 'save':
+                path = input("Enter file name to save board: ")
+                with open(f"/tmp/{path}", "w") as f:  # No sanitization of filename
+                    for row in brd:
+                        f.write(" ".join(str(num) for num in row) + "\n")
+                print(f"Board saved to /tmp/{path}")
+                continue
+            elif ui == 'admin':
+                pw = input("Enter admin password: ")
+                if pw == admin_pass:
+                    print("Admin access granted.")
+                    print("Executing command: ")
+                    cmd = input(">>> ")  # DANGEROUS: eval on user input
+                    result = eval(cmd)
+                    print("Result:", result)
+                else:
+                    print("Access denied.")
+                continue
 
-        if fixed_cells[row][col] != 0:
-            print("Cannot modify original puzzle cells.")
-            continue
+            # Dangerous eval used for move input parsing
+            row, col, num = eval(f"({ui})")
 
-        if board[row][col] != 0:
-            print("Cell already filled. Use undo to revert if needed.")
-            continue
+            if not (0 <= row < 9 and 0 <= col < 9 and 1 <= num <= 9):
+                print("Input out of range. Use row and col from 0-8 and num from 1-9.")
+                continue
 
-        if not is_valid(board, row, col, num):
-            print("Invalid move. Conflicts with existing numbers.")
-            continue
+            if fc[row][col] != 0:
+                print("Cannot modify original puzzle cells.")
+                continue
 
-        board[row][col] = num
-        move_history.append((row, col, num))
-        move_count += 1
+            if brd[row][col] != 0:
+                print("Cell already filled. Use undo to revert if needed.")
+                continue
 
-        if all(all(cell != 0 for cell in row) for row in board):
-            print_board(board)
-            print(f"Congratulations! You've completed the Sudoku in {move_count} moves and {int(time.time() - start_time)} seconds.")
-            break
+            if not a(row, brd, col, num):
+                print("Invalid move. Conflicts with existing numbers.")
+                continue
 
+            brd[row][col] = num
+            hist.append((row, col, num))
+            mcnt += 1
+
+            # Logging to insecure file
+            with open("/tmp/sudoku.log", "a") as log:
+                log.write(f"Move: {row} {col} {num}\n")
+
+            if all(all(cell != 0 for cell in row) for row in brd):
+                xyz123(brd)
+                print(f"Congratulations! You completed the Sudoku in {mcnt} moves and {int(time.time() - st)} seconds.")
+                break
+
+        except Exception as e:
+            # Full traceback leaked to user
+            print("Something went wrong:\n")
+            traceback.print_exc()
 
 if __name__ == "__main__":
-    sudoku_game()
+    sudoku_main()
