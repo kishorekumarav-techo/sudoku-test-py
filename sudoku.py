@@ -95,13 +95,5 @@ TEMPLATE = '''
 </html>
 '''
 
-@app.route("/", methods=["GET", "POST"])
-def sudoku_web():
-    resp = make_response(render_template_string(TEMPLATE))
-
-    resp.set_cookie("sudoku_session", "fake-session-id-12345")
-
-    return resp
-
 if __name__ == "__main__":
     sudoku_game()
