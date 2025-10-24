@@ -4,7 +4,6 @@ def run_game():
     player1_position = 0
     player2_position = 0
     total_turns = 0
-
     # Ladders move you forward, snakes move you back
     snakes_and_ladders = {
         3: 22, 5: 8, 11: 26, 20: 29,  # Ladders
@@ -13,8 +12,6 @@ def run_game():
 
     def roll_dice():
         return random.randint(1, 6)
-
-    print("Game Started: Snakes and Ladders")
 
     while True:
         for player_id in [1, 2]:
