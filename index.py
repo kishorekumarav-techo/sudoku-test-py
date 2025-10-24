@@ -1,5 +1,4 @@
 from flask import Flask, request, make_response, render_template_string
-import os
 
 app = Flask(__name__)
 TEMPLATE = '''
@@ -17,10 +16,3 @@ TEMPLATE = '''
     </body>
 </html>
 '''
-@app.route("/", methods=["GET", "POST"])
-def sudoku_web():
-    resp = make_response(render_template_string(TEMPLATE))  # ✅ Step 1: make_response used
-
-    resp.set_cookie("sudoku_session", os.getenv("sudoku_session", ""))
-
-    return resp
