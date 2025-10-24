@@ -1,5 +1,6 @@
 from flask import Flask, request, make_response, render_template_string
 import os
+
 app = Flask(__name__)
 TEMPLATE = '''
 <!doctype html>
