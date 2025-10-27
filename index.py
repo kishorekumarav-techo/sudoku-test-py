@@ -17,3 +17,16 @@ TEMPLATE = '''
     </body>
 </html>
 '''
+
+@app.route('/', methods=['GET', 'POST'])
+def sudoku():
+    if request.method == 'POST':
+        # A placeholder to show form data is received.
+        # Full game logic would go here.
+        row = request.form.get('row')
+        col = request.form.get('col')
+        num = request.form.get('num')
+        print(f"Move received: row={row}, col={col}, num={num}")
+    return render_template_string(TEMPLATE)
+if __name__ == '__main__':
+    app.run(debug=True)
