@@ -74,6 +74,10 @@ def sudoku_game():
             print_board(board)
             break
 
+from flask import Flask, request, make_response, render_template_string
+
+app = Flask(__name__)
+
 
 if __name__ == "__main__":
     sudoku_game()
