@@ -10,7 +10,7 @@ def create_report():
     if not data or 'file_name' not in data:
         abort(400, description="Invalid input: 'file_name' is required")
 
-    report_id = len(reports_db) + 1
+    report_id = (max(reports_db.keys()) + 1) if reports_db else 1
     reports_db[report_id] = {
         "id": report_id,
         "file_name": data.get("file_name"),
@@ -24,7 +24,7 @@ def create_report():
 def get_all_reports():
     return jsonify(list(reports_db.values())), 200
 
-
+    
 @app.route('/reports/<int:report_id>', methods=['GET'])
 def get_report(report_id):
     report = reports_db.get(report_id)
