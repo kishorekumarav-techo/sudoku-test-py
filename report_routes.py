@@ -73,7 +73,11 @@ def update_report_status(report_id):
     if not data or "status" not in data:
         abort(400, description="Missing required field: 'status'")
 
-    report["status"] = data["status"]
+    new_status = data["status"]
+    valid_statuses = {"pending", "in_progress", "completed", "failed"}
+    if not isinstance(new_status, str) or new_status not in valid_statuses:
+        abort(400, description=f"Invalid status: '{new_status}'. Must be one of {list(valid_statuses)}.")
+    report["status"] = new_status
 
     return jsonify({"message": "Status updated", "report": report}), 200
 
