@@ -7,7 +7,7 @@ reports_db = {}
 @app.route('/reports', methods=['POST'])
 def create_report():
     data = request.get_json()
-    if not data or 'file_name' not in data:
+    if not data or not data.get('file_name'):
         abort(400, description="Invalid input: 'file_name' is required")
 
     report_id = (max(reports_db.keys()) + 1) if reports_db else 1
