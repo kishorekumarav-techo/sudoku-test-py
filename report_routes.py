@@ -33,7 +33,7 @@ def get_report(report_id):
     return jsonify(report), 200
 
 
-@app.route('/reports/<int:report_id>', methods=['PUT'])
+@app.route('/reports/<int:report_id>', methods=['PATCH'])
 def update_report(report_id):
     report = reports_db.get(report_id)
     if not report:
