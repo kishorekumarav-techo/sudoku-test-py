@@ -85,8 +85,8 @@ def update_report_status(report_id):
 # 2️⃣ Get reports by status
 @app.route('/reports/status/<string:status>', methods=['GET'])
 def get_reports_by_status(status):
-    filtered = [report for report in reports_db.values() if report["status"] == status]
-    return jsonify(filtered), 200
+    filtered_reports = [report for report in reports_db.values() if report["status"] == status]
+    return jsonify(filtered_reports), 200
 
 
 # 3️⃣ Search reports by keyword in filename or summary
