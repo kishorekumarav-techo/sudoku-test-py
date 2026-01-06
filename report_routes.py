@@ -96,11 +96,11 @@ def search_reports():
     if not keyword:
         abort(400, description="Query parameter 'q' is required")
 
-    results = [
-        r for r in reports_db.values()
-        if keyword in r["file_name"].lower() or keyword in r["summary"].lower()
+    search_results = [
+        report for report in reports_db.values()
+        if keyword in report["file_name"].lower() or keyword in report["summary"].lower()
     ]
-    return jsonify(results), 200
+    return jsonify(search_results), 200
 
 
 # 4️⃣ Delete all reports (requires confirm=true)
