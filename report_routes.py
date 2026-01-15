@@ -90,43 +90,43 @@ def get_reports_by_status(status):
 
 
 # 3️⃣ Search reports by keyword in filename or summary
-# @app.route('/reports/search', methods=['GET'])
-# def search_reports():
-#     keyword = request.args.get("q", "").lower()
-#     if not keyword:
-#         abort(400, description="Query parameter 'q' is required")
+@app.route('/reports/search', methods=['GET'])
+def search_reports():
+    keyword = request.args.get("q", "").lower()
+    if not keyword:
+        abort(400, description="Query parameter 'q' is required")
 
-#     search_results = [
-#         report for report in reports_db.values()
-#         if keyword in report["file_name"].lower() or keyword in report["summary"].lower()
-#     ]
-#     return jsonify(search_results), 200
-
-
-# # 4️⃣ Delete all reports (requires confirm=true)
-# @app.route('/reports', methods=['DELETE'])
-# def delete_all_reports():
-#     confirm = request.args.get("confirm", "false").lower()
-#     if confirm != "true":
-#         abort(400, description="Add '?confirm=true' to delete all reports")
-
-#     reports_db.clear()
-#     return jsonify({"message": "All reports deleted"}), 200
+    search_results = [
+        report for report in reports_db.values()
+        if keyword in report["file_name"].lower() or keyword in report["summary"].lower()
+    ]
+    return jsonify(search_results), 200
 
 
-# # 5️⃣ Count reports (total + by status)
-# @app.route('/reports/count', methods=['GET'])
-# def count_reports():
-#     total = len(reports_db)
-#     status_counts = {}
+# 4️⃣ Delete all reports (requires confirm=true)
+@app.route('/reports', methods=['DELETE'])
+def delete_all_reports():
+    confirm = request.args.get("confirm", "false").lower()
+    if confirm != "true":
+        abort(400, description="Add '?confirm=true' to delete all reports")
 
-#     for r in reports_db.values():
-#         status_counts[r["status"]] = status_counts.get(r["status"], 0) + 1
+    reports_db.clear()
+    return jsonify({"message": "All reports deleted"}), 200
 
-#     return jsonify({
-#         "total_reports": total,
-#         "by_status": status_counts
-#     }), 200
+
+# 5️⃣ Count reports (total + by status)
+@app.route('/reports/count', methods=['GET'])
+def count_reports():
+    total = len(reports_db)
+    status_counts = {}
+
+    for r in reports_db.values():
+        status_counts[r["status"]] = status_counts.get(r["status"], 0) + 1
+
+    return jsonify({
+        "total_reports": total,
+        "by_status": status_counts
+    }), 200
 
 
 if __name__ == '__main__':
