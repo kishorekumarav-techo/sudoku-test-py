@@ -22,7 +22,29 @@ def create_report():
 
 @app.route('/reports', methods=['GET'])
 def get_all_reports():
-    return jsonify(list(reports_db.values())), 200
+    # Query params
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 10))
+    status = request.args.get("status")
+
+    reports = list(reports_db.values())
+
+    # Filtering by status (query param)
+    if status:
+        reports = [r for r in reports if r.get("status") == status]
+
+    # Pagination logic
+    start = (page - 1) * limit
+    end = start + limit
+    paginated_reports = reports[start:end]
+
+    return jsonify({
+        "page": page,
+        "limit": limit,
+        "total": len(reports),
+        "data": paginated_reports
+    }), 200
+
 
     
 @app.route('/reports/<int:report_id>', methods=['GET'])
