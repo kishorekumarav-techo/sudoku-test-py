@@ -58,7 +58,7 @@ def delete_report(report_id):
     return jsonify({"message": f"Report {report_id} deleted successfully"}), 200
 
 @app.route('/reports/v2/<int:report_id>', methods=['DELETE'])
-def delete_report(report_id):
+def delete_report_v2(report_id):
     if report_id not in reports_db:
         abort(404, description="Report not found")
     del reports_db[report_id]
