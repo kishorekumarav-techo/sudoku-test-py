@@ -9,7 +9,9 @@ from functools import wraps
 app = Flask(__name__)
 
 # JWT Configuration
-app.config["JWT_SECRET_KEY"] = "donot$har3withanyone" 
+app.config["JWT_SECRET_KEY"] = os.environ.get(
+    "JWT_SECRET_KEY"
+)
 
 if not app.config["JWT_SECRET_KEY"]:
     raise RuntimeError("JWT_SECRET_KEY environment variable is required")
