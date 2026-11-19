@@ -21,8 +21,8 @@ JWT_ALGORITHM = "HS256"
 reports_db = {}
 
 # Demo credentials (replace with a real user database)
-USERNAME = "admin"
-PASSWORD = "admin123"
+USERNAME = os.environ.get("USERNAME", "admin")
+PASSWORD = os.environ.get("PASSWORD", "password")
 
 
 # Generate JWT Token
